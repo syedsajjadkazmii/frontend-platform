@@ -74,7 +74,202 @@
 
 <hr>
 
-<h1>3. Multilingual Architecture Overview</h1>
+<h1>3. Multilingual UX Evidence (Screenshots Section)</h1>
+
+<p style="background:#e8f4fd; border-left:4px solid #1a73e8; padding:12px 16px; border-radius:4px; font-size:14px;">
+<strong>Note to proposal team:</strong> Each screenshot below should prove ONE specific multilingual capability. Replace each placeholder with the actual screenshot. This is the section Microsoft evaluators will review most closely for visual proof of multilingual UX.</p>
+
+<h2>3.1 Authentication Experience Localization</h2>
+
+<h3>Screenshot: Login Page (English)</h3>
+<p>Shows <code>defaultMessage</code> rendering from structured message descriptors in the baseline English locale.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Login page rendered in English, showing "Sign in", field labels, and form elements]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>Baseline UX rendered from structured message descriptors</li>
+  <li>All visible text sourced from <code>defineMessages</code>, not hardcoded strings</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-app-authn/blob/master/src/login/messages.jsx"><code>frontend-app-authn/src/login/messages.jsx</code></a></p>
+
+<h3>Screenshot: Login Page (Spanish / es-419)</h3>
+<p>Same page with <code>openedx-language-preference</code> cookie set to <code>es-419</code>, showing translated UI.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Login page rendered in Spanish (es-419), all labels and buttons translated]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>Runtime locale switching via cookie preference</li>
+  <li>Non-browser translation system — identical strings rendered from compiled locale bundles</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/lib.js"><code>frontend-platform/src/i18n/lib.js</code></a> — <code>getLocale()</code> reads <code>LANGUAGE_PREFERENCE_COOKIE_NAME</code></p>
+
+<h3>Screenshot: Login Page (Arabic — RTL)</h3>
+<p>Full UI with flipped right-to-left layout, Arabic text, and <code>&lt;html dir="rtl"&gt;</code>.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Login page rendered in Arabic with full RTL layout — form fields, labels, buttons all mirrored]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>RTL support — entire layout mirrored automatically</li>
+  <li>Layout adaptation driven by <code>&lt;html dir="rtl"&gt;</code></li>
+  <li>Arabic translation quality from professional Transifex workflow</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/lib.js"><code>frontend-platform/src/i18n/lib.js</code></a> — <code>handleRtl()</code> lines 203–208, <code>rtlLocales</code> lines 59–65</p>
+
+<h3>Screenshot: Password Reset with Email Interpolation</h3>
+<p>"We sent an email to <strong>user@example.com</strong>" — showing ICU MessageFormat variable interpolation within a translated string.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Password reset confirmation showing interpolated email address within translated message text]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>ICU MessageFormat interpolation — <code>{email}</code> variable rendered inside translated string</li>
+  <li>Dynamic variable translation — React elements embedded within localized output</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-app-authn/blob/master/src/forgot-password/ForgotPasswordAlert.jsx"><code>frontend-app-authn/src/forgot-password/ForgotPasswordAlert.jsx</code></a> — <code>FormattedMessage</code> with <code>values=&#123;&#123; email, supportLink &#125;&#125;</code></p>
+
+<hr>
+
+<h2>3.2 Learning Experience Localization</h2>
+
+<p style="background:#fff3cd; border-left:4px solid #ffc107; padding:12px 16px; border-radius:4px; font-size:14px;">
+<strong>Most important section for Microsoft.</strong> These screenshots demonstrate that the entire learning experience — not just authentication — is fully localized.</p>
+
+<h3>Screenshot: Course Home / Outline (English)</h3>
+<p>Course outline tab showing section titles, "Resume course" / "Start course" buttons, progress indicators, and navigation.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Course home outline tab in English showing sections, resume button, expand/collapse, dates sidebar]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>Base learning UX coverage — all navigation and instructional text from message descriptors</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-app-learning/blob/master/src/course-home/outline-tab/messages.ts"><code>frontend-app-learning/src/course-home/outline-tab/messages.ts</code></a></p>
+
+<h3>Screenshot: Course Outline (Translated)</h3>
+<p>Same course outline in a non-English locale, showing translated navigation labels, section titles, and action buttons.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Course outline tab in a translated locale (e.g., Spanish, French, Arabic) showing translated "Resume course", "Expand all", date labels]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>Learning UI localization — course navigation is fully translated</li>
+  <li>Shared i18n system across MFEs — same <code>frontend-platform</code> framework as authn</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-app-learning/blob/master/src/course-home/outline-tab/messages.ts"><code>frontend-app-learning/src/course-home/outline-tab/messages.ts</code></a> — messages for "Resume course", "Start course", "Expand all", "Collapse all", etc.</p>
+
+<h3>Screenshot: Course Progress Tab (Localized Numbers)</h3>
+<p>Progress tab showing grade percentages, weighted grade summary, grade bar, and assignment type labels.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Progress tab showing "Your current grade is X%", grade bar, grade summary table with translated column headers]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>ICU number interpolation — <code>{currentGrade}%</code>, <code>{passingGrade}%</code> rendered within translated strings</li>
+  <li>Numeric localization in educational context</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-app-learning/blob/master/src/course-home/progress-tab/grades/messages.ts"><code>frontend-app-learning/src/course-home/progress-tab/grades/messages.ts</code></a> — <code>courseGradeBarAltText</code>, <code>courseGradeFooterNonPassing</code>, etc.</p>
+
+<h3>Screenshot: Course Dates Tab (Localized Labels)</h3>
+<p>Dates tab showing assignment timeline with badge labels: "Completed", "Due next", "Past due", "Today", "Not yet released".</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Dates tab showing translated badge labels on assignment timeline]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>Temporal UI localization — date-related labels fully translated</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-app-learning/blob/master/src/course-home/dates-tab/messages.ts"><code>frontend-app-learning/src/course-home/dates-tab/messages.ts</code></a> — "Completed", "Due next", "Past due", "Today", "Not yet released", "Verified only"</p>
+
+<h3>Screenshot: Course Completion / Celebration Modal</h3>
+<p>Modal showing "Congratulations!", "You met your goal!", and social sharing text after completing a course section or weekly goal.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Celebration modal with translated congratulations message, goal completion text, and share prompt]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>Engagement UX localization — motivational and gamification UI fully translated</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-app-learning/blob/master/src/courseware/course/celebration/messages.ts"><code>frontend-app-learning/src/courseware/course/celebration/messages.ts</code></a> — "Congratulations!", "You met your goal!", social sharing messages with <code>{title}</code> and <code>{platform}</code> interpolation</p>
+
+<h3>Screenshot: Certificate / Course Exit Page</h3>
+<p>Course exit page showing "Your certificate is available!", "View my certificate", "Congratulations!", and program completion messaging.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Course exit / certificate page with translated completion messaging, certificate actions, and dashboard links]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>End-to-end learning lifecycle localization — from enrollment through certification</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-app-learning/blob/master/src/courseware/course/course-exit/messages.ts"><code>frontend-app-learning/src/courseware/course/course-exit/messages.ts</code></a> — certificate headers, verification prompts, LinkedIn integration, social sharing, program messages</p>
+
+<hr>
+
+<h2>3.3 RTL System Proof</h2>
+
+<h3>Screenshot: DevTools Showing <code>&lt;html dir="rtl"&gt;</code></h3>
+<p>Chrome DevTools Elements panel with the <code>&lt;html&gt;</code> tag showing <code>dir="rtl"</code> attribute, proving programmatic RTL handling.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Chrome DevTools Elements tab, expanded &lt;html&gt; tag showing dir="rtl" attribute, with the page visible in Arabic behind it]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>Programmatic RTL — not a CSS hack or browser override</li>
+  <li><code>handleRtl()</code> sets the attribute at app initialization</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/lib.js"><code>frontend-platform/src/i18n/lib.js</code></a> — lines 203–208</p>
+
+<h3>Screenshot: Full Page Layout Shift (Arabic)</h3>
+<p>Full-page view of any page (login, course outline, or progress) in Arabic, showing the complete mirrored layout including navigation, sidebars, and content.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Full-page view in Arabic showing mirrored navigation, content area, and sidebar — everything right-to-left]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>Global layout adaptation — entire page structure mirrors for RTL locales</li>
+  <li>Not just text direction — navigation, forms, and content layout all adapt</li>
+</ul>
+
+<hr>
+
+<h2>3.4 System-Level Proof</h2>
+
+<p style="background:#f8d7da; border-left:4px solid #dc3545; padding:12px 16px; border-radius:4px; font-size:14px;">
+<strong>Critical for Microsoft.</strong> These screenshots prove the localization is application-native, not browser-injected, and is enforced by CI/CD.</p>
+
+<h3>Screenshot: Network Tab — No Google Translate Calls</h3>
+<p>Chrome DevTools Network tab on a localized (non-English) page, filtered to show there are zero requests to <code>translate.googleapis.com</code> or any external translation service.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Chrome DevTools Network tab showing all requests on a translated page — no external translation API calls visible]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>NOT browser translation — no external translation dependency</li>
+  <li>All translations served from compiled locale bundles within the application</li>
+</ul>
+
+<h3>Screenshot: CI Pipeline — i18n_extract Step</h3>
+<p>GitHub Actions log showing a successful (or failing) <code>npm run i18n_extract</code> step in the CI pipeline.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — GitHub Actions workflow run showing the "Run i18n_extract" step with green checkmark or log output]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>Enforced translation extraction — CI validates every PR</li>
+  <li>No untranslatable string can be merged</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-app-authn/blob/master/.github/workflows/ci.yml"><code>frontend-app-authn/.github/workflows/ci.yml</code></a> — lines 29–30<br>
+<a href="https://github.com/openedx/frontend-app-learning/blob/master/.github/workflows/validate.yml"><code>frontend-app-learning/.github/workflows/validate.yml</code></a></p>
+
+<h3>Screenshot: Extracted JSON (Default.messages.json)</h3>
+<p>Partial view of the extracted <code>Default.messages.json</code> file showing structured <code>{id, defaultMessage, description}</code> triples.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Text editor or terminal output showing the JSON array with message objects containing id, defaultMessage, and description fields]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>AST-level extraction — messages extracted by Babel plugin, not regex</li>
+  <li>Translator context exists — every string has a <code>description</code> for professional translators</li>
+</ul>
+<p><strong>Output path:</strong> <code>temp/babel-plugin-formatjs/Default.messages.json</code></p>
+
+<h3>Screenshot: Atlas Pull Output</h3>
+<p>Terminal output of <code>make pull_translations</code> showing multiple translation sources being pulled and merged.</p>
+<div class="placeholder" style="min-height:200px;">[SCREENSHOT — Terminal showing atlas pull output with translations downloaded from frontend-platform, paragon, frontend-component-header, frontend-component-footer, frontend-lib-special-exams, and frontend-app-learning]</div>
+<p><strong>Proves:</strong></p>
+<ul>
+  <li>Enterprise-scale translation aggregation — 6 independent translation sources merged into a single MFE</li>
+  <li>Shared component libraries (Paragon, header, footer) have independent translation pipelines</li>
+</ul>
+<p><strong>Source files:</strong><br>
+<a href="https://github.com/openedx/frontend-app-learning/blob/master/Makefile"><code>frontend-app-learning/Makefile</code></a> — <code>pull_translations</code> target<br>
+<a href="https://github.com/openedx/openedx-translations"><code>openedx/openedx-translations</code></a> — centralized translation repository</p>
+
+<hr>
 
 <h2>End-to-End Localization Flow</h2>
 
@@ -98,9 +293,9 @@ Localized multilingual UX
 
 <hr>
 
-<h1>4. Frontend Internationalization Implementation</h1>
+<h1>5. Frontend Internationalization Implementation</h1>
 
-<h2>4.1 Externalized Translation Messages</h2>
+<h2>5.1 Externalized Translation Messages</h2>
 
 <p>User-facing strings are externalized into structured message descriptors rather than hardcoded into components.</p>
 
@@ -156,7 +351,7 @@ export default messages;</pre>
 
 <p><strong>Source:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/index.ts"><code>frontend-platform/src/i18n/index.ts</code></a> (lines 26–40)</p>
 
-<h2>4.2 Runtime Locale Rendering</h2>
+<h2>5.2 Runtime Locale Rendering</h2>
 
 <p>The platform dynamically renders translated content at runtime using React Intl APIs.</p>
 
@@ -185,7 +380,7 @@ intl.formatMessage(
   { length: courseLength, label: courseLengthLabel },
 )</pre>
 
-<h2>4.3 JSX-Level Localization</h2>
+<h2>5.3 JSX-Level Localization</h2>
 
 <p>The platform supports inline multilingual rendering directly within UI components.</p>
 
@@ -213,7 +408,7 @@ intl.formatMessage(
 
 <hr>
 
-<h1>5. Translation Extraction Workflow</h1>
+<h1>6. Translation Extraction Workflow</h1>
 
 <p>The platform implements automated translation extraction workflows using FormatJS tooling.</p>
 
@@ -269,7 +464,7 @@ intl.formatMessage(
 
 <hr>
 
-<h1>6. Translation Management &amp; Transifex Integration</h1>
+<h1>7. Translation Management &amp; Transifex Integration</h1>
 
 <p>The localization pipeline integrates with Transifex for centralized translation management and synchronization.</p>
 
@@ -347,7 +542,7 @@ extract_translations: | requirements i18n.extract i18n.concat</pre>
 
 <hr>
 
-<h1>7. Locale Resource Management</h1>
+<h1>8. Locale Resource Management</h1>
 
 <p>The platform manages locale-specific translation bundles for multiple languages and regions.</p>
 
@@ -405,7 +600,7 @@ export default [
 
 <hr>
 
-<h1>8. Runtime Localization Architecture</h1>
+<h1>9. Runtime Localization Architecture</h1>
 
 <p>The runtime localization architecture dynamically loads locale bundles and injects them through React Intl providers.</p>
 
@@ -470,7 +665,7 @@ initialize({
 
 <hr>
 
-<h1>9. RTL (Right-to-Left) Support</h1>
+<h1>10. RTL (Right-to-Left) Support</h1>
 
 <p>The platform includes built-in RTL handling for languages such as Arabic and Hebrew.</p>
 
@@ -518,7 +713,7 @@ export function handleRtl() {
 
 <hr>
 
-<h1>10. Locale Resolution &amp; Fallback Strategy</h1>
+<h1>11. Locale Resolution &amp; Fallback Strategy</h1>
 
 <p>The platform implements enterprise-grade locale fallback behavior.</p>
 
@@ -575,7 +770,7 @@ export function handleRtl() {
 
 <hr>
 
-<h1>11. Learning &amp; Course Content Multilingual Support</h1>
+<h1>12. Learning &amp; Course Content Multilingual Support</h1>
 
 <p>The <code>frontend-app-learning</code> architecture leverages the same shared <code>frontend-platform</code> internationalization framework.</p>
 
@@ -638,7 +833,7 @@ initialize({ messages });</pre>
 
 <hr>
 
-<h1>12. CI/CD &amp; Translation Automation</h1>
+<h1>13. CI/CD &amp; Translation Automation</h1>
 
 <p>The localization architecture includes CI/CD validation for translation extraction workflows.</p>
 
