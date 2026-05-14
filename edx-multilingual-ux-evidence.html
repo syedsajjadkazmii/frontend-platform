@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>edX Case Study for Multilingual UX</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #222; }
+  h1 { font-size: 24px; border-bottom: 2px solid #333; padding-bottom: 8px; margin-top: 40px; }
+  h2 { font-size: 20px; margin-top: 30px; }
+  h3 { font-size: 16px; margin-top: 20px; }
+  p, li { font-size: 14px; }
+  ul { margin-left: 20px; }
+  code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 13px; }
+  pre { background: #f4f4f4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.5; }
+  a { color: #1a73e8; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+  th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; font-size: 14px; }
+  th { background: #f0f0f0; font-weight: bold; }
+  .placeholder { background: #fff3cd; border: 1px dashed #ffc107; padding: 10px 16px; border-radius: 4px; margin: 12px 0; font-style: italic; color: #856404; }
+  .flow-diagram { background: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 6px; text-align: center; font-family: 'Courier New', monospace; font-size: 14px; line-height: 2; }
+</style>
+</head>
+<body>
+
+<h1 style="font-size:28px; text-align:center; border-bottom:none;">edX Case Study for Multilingual UX</h1>
+<h2 style="text-align:center; color:#555; margin-top:0;">Open edX Frontend Internationalization Architecture</h2>
+
+<hr>
+
+<h1>1. Executive Summary</h1>
+
+<p>The Open edX frontend ecosystem implements a framework-level multilingual architecture designed to support scalable global educational deployments across multiple languages and regions.</p>
+
+<p>The multilingual implementation goes significantly beyond browser-level translation by embedding internationalization (i18n) and localization (l10n) capabilities directly into the frontend application architecture. User-facing strings are externalized into structured translation resources, translated through centralized localization workflows, and dynamically rendered at runtime using locale-aware rendering utilities.</p>
+
+<p>The platform leverages:</p>
+<ul>
+  <li>React Intl-based runtime localization</li>
+  <li>Structured translation message extraction</li>
+  <li>Centralized translation synchronization workflows</li>
+  <li>Locale-aware rendering</li>
+  <li>Runtime language resolution and fallback strategies</li>
+  <li>Right-to-left (RTL) layout support</li>
+  <li>Translation bundle generation and loading</li>
+  <li>Scalable translation management pipelines integrated with Transifex</li>
+</ul>
+
+<p>These capabilities enable consistent multilingual user experiences across authentication flows, learning/course experiences, validation systems, navigation, and surfaced educational content.</p>
+
+<p>This document summarizes the multilingual technical architecture, localization workflows, runtime rendering mechanisms, and supporting evidence from the Open edX frontend ecosystem, including:</p>
+<ul>
+  <li>frontend-app-authn</li>
+  <li>frontend-app-learning</li>
+  <li>frontend-platform</li>
+</ul>
+
+<hr>
+
+<h1>2. Multilingual Approach Beyond Browser-Level Translation</h1>
+
+<p>The platform explicitly does not rely on browser-based translation tools. Instead, it uses a deterministic, application-controlled localization pipeline.</p>
+
+<p>Key differentiators:</p>
+<ul>
+  <li>All user-facing text is defined as structured message descriptors (<code>id</code>, <code>defaultMessage</code>, <code>description</code>)</li>
+  <li>Translations are resolved at runtime via React Intl, not DOM rewriting</li>
+  <li>ICU MessageFormat enables variable interpolation and plural rules</li>
+  <li>Locale-specific bundles are pre-generated and loaded into the application</li>
+  <li>Translation quality is controlled via human translation workflows (Transifex)</li>
+  <li>CI/CD ensures all strings are extracted and validated before merge</li>
+</ul>
+
+<p><strong>Conclusion:</strong> Localization is fully implemented at the application layer, ensuring consistent, high-fidelity multilingual UX across all environments.</p>
+
+<hr>
+
+<h1>3. Multilingual Architecture Overview</h1>
+
+<h2>End-to-End Localization Flow</h2>
+
+<div class="flow-diagram">
+Developer-defined translatable strings<br>
+↓<br>
+Automated extraction tooling (FormatJS)<br>
+↓<br>
+Translation synchronization pipeline<br>
+↓<br>
+Transifex translation management<br>
+↓<br>
+Locale-specific translation bundle generation<br>
+↓<br>
+Runtime locale loading<br>
+↓<br>
+React Intl rendering<br>
+↓<br>
+Localized multilingual UX
+</div>
+
+<hr>
+
+<h1>4. Frontend Internationalization Implementation</h1>
+
+<h2>4.1 Externalized Translation Messages</h2>
+
+<p>User-facing strings are externalized into structured message descriptors rather than hardcoded into components.</p>
+
+<p>Example capabilities:</p>
+<ul>
+  <li>Locale-aware rendering</li>
+  <li>Translation-ready architecture</li>
+  <li>Centralized translation identifiers</li>
+  <li>Translator descriptions/context</li>
+</ul>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — defineMessages implementation]</div>
+
+<p><strong>Repository:</strong> frontend-app-authn<br>
+<strong>File:</strong> <a href="https://github.com/openedx/frontend-app-authn/blob/master/src/base-container/components/default-layout/messages.js"><code>src/base-container/components/default-layout/messages.js</code></a></p>
+
+<pre>import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+  'start.learning': {
+    id: 'start.learning',
+    defaultMessage: 'Start learning',
+    description: 'Header text for logistration MFE pages',
+  },
+  'with.site.name': {
+    id: 'with.site.name',
+    defaultMessage: 'with {siteName}',
+    description: 'Header text with site name for logistration MFE pages',
+  },
+});
+
+export default messages;</pre>
+
+<p><strong>Repository:</strong> frontend-app-learning<br>
+<strong>File:</strong> <a href="https://github.com/openedx/frontend-app-learning/blob/master/src/course-home/outline-tab/messages.ts"><code>src/course-home/outline-tab/messages.ts</code></a></p>
+
+<pre>const messages = defineMessages({
+  resume: {
+    id: 'learning.outline.resume',
+    defaultMessage: 'Resume course',
+    description: 'Anchor text for button that would resume course',
+  },
+  collapseAll: {
+    id: 'learning.outline.collapseAll',
+    defaultMessage: 'Collapse all',
+    description: 'Label for button to close all of the collapsible sections',
+  },
+});</pre>
+
+<p>All micro-frontends import <code>defineMessages</code>, <code>FormattedMessage</code>, and <code>useIntl</code> from <code>@edx/frontend-platform/i18n</code>.</p>
+
+<p><strong>Source:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/index.ts"><code>frontend-platform/src/i18n/index.ts</code></a> (lines 26–40)</p>
+
+<h2>4.2 Runtime Locale Rendering</h2>
+
+<p>The platform dynamically renders translated content at runtime using React Intl APIs.</p>
+
+<p>Capabilities include:</p>
+<ul>
+  <li>Localized validation messages</li>
+  <li>Dynamic interpolation</li>
+  <li>Runtime translation rendering</li>
+  <li>Locale-aware formatting</li>
+</ul>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — useIntl + formatMessage]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-authn/blob/master/src/forgot-password/ForgotPasswordAlert.jsx"><code>frontend-app-authn/src/forgot-password/ForgotPasswordAlert.jsx</code></a></p>
+
+<pre>const { formatMessage } = useIntl();
+let heading = formatMessage(messages['forgot.password.error.alert.title']);</pre>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-authn/blob/master/src/recommendations/ProductCard/Footer/index.jsx"><code>frontend-app-authn/src/recommendations/ProductCard/Footer/index.jsx</code></a></p>
+
+<pre>const intl = useIntl();
+intl.formatMessage(
+  cardFooterMessages['recommendation.product-card.footer-text.number-of-courses'],
+  { length: courseLength, label: courseLengthLabel },
+)</pre>
+
+<h2>4.3 JSX-Level Localization</h2>
+
+<p>The platform supports inline multilingual rendering directly within UI components.</p>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — FormattedMessage usage]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-authn/blob/master/src/forgot-password/ForgotPasswordAlert.jsx"><code>frontend-app-authn/src/forgot-password/ForgotPasswordAlert.jsx</code></a></p>
+
+<pre>&lt;FormattedMessage
+  id="forgot.password.confirmation.message"
+  defaultMessage="We sent an email to {email} with instructions to reset your password.
+    If you do not receive a password reset message after 1 minute, verify that you entered
+    the correct email address, or check your spam folder. If you need further assistance,
+    {supportLink}."
+  values={{
+    email: &lt;span className="data-hj-suppress"&gt;{email}&lt;/span&gt;,
+    supportLink: (
+      &lt;Alert.Link href={getConfig().PASSWORD_RESET_SUPPORT_LINK} target="_blank"&gt;
+        {formatMessage(messages['confirmation.support.link'])}
+      &lt;/Alert.Link&gt;
+    ),
+  }}
+/&gt;</pre>
+
+<hr>
+
+<h1>5. Translation Extraction Workflow</h1>
+
+<p>The platform implements automated translation extraction workflows using FormatJS tooling.</p>
+
+<p>Capabilities:</p>
+<ul>
+  <li>Static extraction of translatable strings</li>
+  <li>Automated message catalog generation</li>
+  <li>Build-time validation</li>
+  <li>Structured translation payload generation</li>
+</ul>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — package.json i18n_extract]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-authn/blob/master/package.json"><code>frontend-app-authn/package.json</code></a> (line 14)<br>
+<strong>File:</strong> <a href="https://github.com/openedx/frontend-app-learning/blob/master/package.json"><code>frontend-app-learning/package.json</code></a><br>
+<strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/package.json"><code>frontend-platform/package.json</code></a> (line 16)</p>
+
+<pre>"i18n_extract": "fedx-scripts formatjs extract"</pre>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — fedx-scripts extraction flow]</div>
+
+<p>The extraction dispatch is handled by <code>@openedx/frontend-build</code>:</p>
+
+<p><strong>File:</strong> <code>node_modules/@openedx/frontend-build/bin/fedx-scripts.js</code> (lines 71–102)<br>
+<strong>Source repo:</strong> <a href="https://github.com/openedx/frontend-build/blob/master/bin/fedx-scripts.js"><code>openedx/frontend-build</code></a></p>
+
+<pre>case 'formatjs': {
+    const commonArgs = [
+      '--format', 'node_modules/@openedx/frontend-build/lib/formatter.js',
+      '--out-file', './temp/babel-plugin-formatjs/Default.messages.json',
+      '--', `${srcFoldersString}/**/*.{j,t}s*`,
+    ];
+    ensureConfigOption(presets.formatjs);
+    require('@formatjs/cli/bin/formatjs');
+}</pre>
+
+<p>The Babel i18n environment that enables extraction:</p>
+
+<p><strong>File:</strong> <code>node_modules/@openedx/frontend-build/config/babel.config.js</code> (lines 40–48)<br>
+<strong>Source repo:</strong> <a href="https://github.com/openedx/frontend-build/blob/master/config/babel.config.js"><code>openedx/frontend-build</code></a></p>
+
+<pre>env: {
+  i18n: {
+    plugins: [['formatjs']],
+  },
+},</pre>
+
+<p><strong>Output:</strong> <code>temp/babel-plugin-formatjs/Default.messages.json</code> — a structured array of <code>{id, defaultMessage, description}</code> triples.</p>
+
+<hr>
+
+<h1>6. Translation Management &amp; Transifex Integration</h1>
+
+<p>The localization pipeline integrates with Transifex for centralized translation management and synchronization.</p>
+
+<p>Capabilities:</p>
+<ul>
+  <li>Translation synchronization</li>
+  <li>Translation upload/download workflows</li>
+  <li>Locale-specific resource management</li>
+  <li>Translator metadata support</li>
+</ul>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — transifex-utils.js]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/scripts/transifex-utils.js"><code>frontend-platform/src/i18n/scripts/transifex-utils.js</code></a></p>
+
+<pre>const output = {};
+messageObjects.forEach((message) =&gt; {
+  output[message.id] = message.defaultMessage;
+});
+fs.writeFileSync(process.argv[3], JSON.stringify(output, null, 2));</pre>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — extract_translations Makefile target]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-authn/blob/master/Makefile"><code>frontend-app-authn/Makefile</code></a> (lines 16–25)<br>
+<strong>File:</strong> <a href="https://github.com/openedx/frontend-app-learning/blob/master/Makefile"><code>frontend-app-learning/Makefile</code></a><br>
+<strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/Makefile"><code>frontend-platform/Makefile</code></a> (lines 44–53)</p>
+
+<pre>i18n.extract:
+	rm -rf $(transifex_temp)
+	npm run-script i18n_extract
+
+i18n.concat:
+	$(transifex_utils) $(transifex_temp) $(transifex_input)
+
+extract_translations: | requirements i18n.extract i18n.concat</pre>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — atlas pull workflow]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-learning/blob/master/Makefile"><code>frontend-app-learning/Makefile</code></a> (pull_translations target)</p>
+
+<pre>pull_translations:
+	rm -rf src/i18n/messages
+	mkdir src/i18n/messages
+	cd src/i18n/messages \
+	  &amp;&amp; atlas pull $(ATLAS_OPTIONS) \
+	           translations/frontend-platform/src/i18n/messages:frontend-platform \
+	           translations/paragon/src/i18n/messages:paragon \
+	           translations/frontend-component-header/src/i18n/messages:frontend-component-header \
+	           translations/frontend-component-footer/src/i18n/messages:frontend-component-footer \
+	           translations/frontend-lib-special-exams/src/i18n/messages:frontend-lib-special-exams \
+	           translations/frontend-app-learning/src/i18n/messages:frontend-app-learning
+
+	$(intl_imports) frontend-platform paragon frontend-component-header frontend-component-footer frontend-lib-special-exams frontend-app-learning</pre>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-authn/blob/master/Makefile"><code>frontend-app-authn/Makefile</code></a> (lines 32–41)</p>
+
+<pre>pull_translations:
+	rm -rf src/i18n/messages
+	mkdir src/i18n/messages
+	cd src/i18n/messages \
+	  &amp;&amp; atlas pull $(ATLAS_OPTIONS) \
+	           translations/paragon/src/i18n/messages:paragon \
+	           translations/frontend-platform/src/i18n/messages:frontend-platform \
+	           translations/frontend-app-authn/src/i18n/messages:frontend-app-authn
+
+	$(intl_imports) paragon frontend-platform frontend-app-authn</pre>
+
+<p>Translations are pulled from the centralized <a href="https://github.com/openedx/openedx-translations"><code>openedx/openedx-translations</code></a> repository via <code>@edx/openedx-atlas</code>.</p>
+
+<hr>
+
+<h1>7. Locale Resource Management</h1>
+
+<p>The platform manages locale-specific translation bundles for multiple languages and regions.</p>
+
+<p>Capabilities:</p>
+<ul>
+  <li>Per-locale translation resources</li>
+  <li>Runtime locale loading</li>
+  <li>Shared translation inheritance</li>
+  <li>Modular locale architecture</li>
+</ul>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — locale JSON files]</div>
+
+<p>After <code>atlas pull</code>, the <code>intl-imports.js</code> script generates per-locale index files:</p>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/scripts/intl-imports.js"><code>frontend-platform/src/i18n/scripts/intl-imports.js</code></a></p>
+
+<p>Generated per-subdirectory index (example output):</p>
+
+<pre>import messagesOfArLanguage from './ar.json';
+import messagesOfEs419Language from './es_419.json';
+export default {
+  'ar': messagesOfArLanguage,
+  'es-419': messagesOfEs419Language,
+};</pre>
+
+<p>Generated main <code>src/i18n/index.js</code> (example output):</p>
+
+<pre>import messagesFromFrontendPlatform from './messages/frontend-platform';
+import messagesFromParagon from './messages/paragon';
+import messagesFromFrontendAppLearning from './messages/frontend-app-learning';
+
+export default [
+  messagesFromFrontendPlatform,
+  messagesFromParagon,
+  messagesFromFrontendAppLearning,
+];</pre>
+
+<p>Without atlas pull, the committed placeholder exports an empty array:</p>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-authn/blob/master/src/i18n/index.js"><code>frontend-app-authn/src/i18n/index.js</code></a><br>
+<strong>File:</strong> <a href="https://github.com/openedx/frontend-app-learning/blob/master/src/i18n/index.js"><code>frontend-app-learning/src/i18n/index.js</code></a></p>
+
+<pre>export default [];</pre>
+
+<p>Example locales supported (<code>frontend-platform/src/i18n/lib.js</code> lines 40–58):</p>
+<ul>
+  <li>ar.json (Arabic)</li>
+  <li>es_419.json (Spanish, Latin American)</li>
+  <li>zh_CN.json (Chinese, Simplified)</li>
+  <li>fr.json, ca.json, he.json, id.json, ko_kr.json, pl.json, pt_br.json, ru.json, th.json, uk.json, vi.json</li>
+</ul>
+
+<hr>
+
+<h1>8. Runtime Localization Architecture</h1>
+
+<p>The runtime localization architecture dynamically loads locale bundles and injects them through React Intl providers.</p>
+
+<p>Capabilities:</p>
+<ul>
+  <li>Locale-aware rendering</li>
+  <li>Dynamic locale resolution</li>
+  <li>Shared translation merging</li>
+  <li>Runtime language switching</li>
+</ul>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — initialize({ messages })]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-authn/blob/master/src/index.jsx"><code>frontend-app-authn/src/index.jsx</code></a> (lines 36–43)<br>
+<strong>File:</strong> <a href="https://github.com/openedx/frontend-app-learning/blob/master/src/index.jsx"><code>frontend-app-learning/src/index.jsx</code></a></p>
+
+<pre>import messages from './i18n';
+
+initialize({
+  handlers: { config: () =&gt; { mergeConfig(configuration); } },
+  messages,
+});</pre>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — configureI18n()]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/initialize.js"><code>frontend-platform/src/initialize.js</code></a> (lines 332–337)</p>
+
+<pre>configureI18n({
+  messages,
+  config: getConfig(),
+  loggingService: getLoggingService(),
+});</pre>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/lib.js"><code>frontend-platform/src/i18n/lib.js</code></a> (lines 266–289)</p>
+
+<pre>export function configure(options) {
+  messages = Array.isArray(options.messages) ? merge({}, ...options.messages) : options.messages;
+  handleRtl();
+}</pre>
+
+<p>The <code>lodash.merge</code> deep-merges the array so MFE-specific translations override library translations for duplicate keys.</p>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — IntlProvider implementation]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/react/AppProvider.jsx"><code>frontend-platform/src/react/AppProvider.jsx</code></a> (lines 93–110)</p>
+
+<pre>&lt;IntlProvider locale={locale} messages={getMessages()}&gt;
+  &lt;ErrorBoundary&gt;
+    &lt;AppContext.Provider value={appContextValue}&gt;
+      {children}
+    &lt;/AppContext.Provider&gt;
+  &lt;/ErrorBoundary&gt;
+&lt;/IntlProvider&gt;</pre>
+
+<p><code>LOCALE_CHANGED</code> pub/sub event triggers live re-render without page reload (line 67–69).</p>
+
+<hr>
+
+<h1>9. RTL (Right-to-Left) Support</h1>
+
+<p>The platform includes built-in RTL handling for languages such as Arabic and Hebrew.</p>
+
+<p>Capabilities:</p>
+<ul>
+  <li>Automatic <code>dir="rtl"</code> handling</li>
+  <li>Bidirectional layout support</li>
+  <li>Locale-aware document direction</li>
+  <li>Runtime RTL switching</li>
+</ul>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — rtlLocales list]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/lib.js"><code>frontend-platform/src/i18n/lib.js</code></a> (lines 59–65)</p>
+
+<pre>const rtlLocales = [
+  'ar',     // Arabic
+  'he',     // Hebrew
+  'fa',     // Farsi
+  'fa-ir',  // Farsi Iran
+  'ur',     // Urdu
+];</pre>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — handleRtl()]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/lib.js"><code>frontend-platform/src/i18n/lib.js</code></a> (lines 193–208)</p>
+
+<pre>export function isRtl(locale) {
+  return rtlLocales.includes(locale);
+}
+
+export function handleRtl() {
+  if (isRtl(getLocale())) {
+    globalThis.document.getElementsByTagName('html')[0].setAttribute('dir', 'rtl');
+  } else {
+    globalThis.document.getElementsByTagName('html')[0].setAttribute('dir', 'ltr');
+  }
+}</pre>
+
+<p><code>handleRtl()</code> is called automatically during <code>configure()</code> at app initialization (line 288). Unit tests validating both paths: <a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/lib.test.js"><code>frontend-platform/src/i18n/lib.test.js</code></a> (lines 218–250).</p>
+
+<hr>
+
+<h1>10. Locale Resolution &amp; Fallback Strategy</h1>
+
+<p>The platform implements enterprise-grade locale fallback behavior.</p>
+
+<p>Resolution order:</p>
+<ol>
+  <li>Explicit application locale</li>
+  <li>User language preference cookie</li>
+  <li>Browser language</li>
+  <li>English fallback</li>
+</ol>
+
+<p>Fallback behavior:</p>
+<ul>
+  <li>Exact locale match</li>
+  <li>Primary language subtag fallback</li>
+  <li>Default English fallback</li>
+</ul>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — getLocale()]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/lib.js"><code>frontend-platform/src/i18n/lib.js</code></a> (lines 155–173)</p>
+
+<pre>export function getLocale(locale) {
+  // 1. Explicit application request
+  if (locale !== undefined) return findSupportedLocale(locale);
+  // 2. User setting in cookie
+  const cookieLangPref = cookies.get(config.LANGUAGE_PREFERENCE_COOKIE_NAME);
+  if (cookieLangPref) return findSupportedLocale(cookieLangPref.toLowerCase());
+  // 3. Browser language
+  return findSupportedLocale(globalThis.navigator.language.toLowerCase());
+}</pre>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — findSupportedLocale()]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/lib.js"><code>frontend-platform/src/i18n/lib.js</code></a> (lines 133–143)</p>
+
+<pre>export function findSupportedLocale(locale) {
+  if (messages[locale] !== undefined) { return locale; }
+  if (messages[getPrimaryLanguageSubtag(locale)] !== undefined) {
+    return getPrimaryLanguageSubtag(locale);
+  }
+  return 'en';
+}</pre>
+
+<p>Country and language name helpers implement the same primary-subtag-to-English fallback:</p>
+<ul>
+  <li><a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/countries.js"><code>frontend-platform/src/i18n/countries.js</code></a> (line 52)</li>
+  <li><a href="https://github.com/openedx/frontend-platform/blob/master/src/i18n/languages.js"><code>frontend-platform/src/i18n/languages.js</code></a> (line 54)</li>
+</ul>
+
+<hr>
+
+<h1>11. Learning &amp; Course Content Multilingual Support</h1>
+
+<p>The <code>frontend-app-learning</code> architecture leverages the same shared <code>frontend-platform</code> internationalization framework.</p>
+
+<p>This enables:</p>
+<ul>
+  <li>Localized course discovery experiences</li>
+  <li>Multilingual course navigation</li>
+  <li>Translated surfaced content</li>
+  <li>Localized learning workflows</li>
+  <li>Shared translation infrastructure across learning applications</li>
+</ul>
+
+<p>Capabilities demonstrated:</p>
+<ul>
+  <li>Shared locale management</li>
+  <li>Shared translation extraction workflows</li>
+  <li>Shared runtime locale rendering</li>
+  <li>Reusable multilingual UI components</li>
+</ul>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — frontend-app-learning using frontend-platform/i18n]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-learning/blob/master/src/index.jsx"><code>frontend-app-learning/src/index.jsx</code></a></p>
+
+<pre>import messages from './i18n';
+initialize({ messages });</pre>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — localized course UI]</div>
+
+<p>Example localized learning domain message files:</p>
+
+<table>
+  <tr><th>Learning Domain</th><th>File Path</th></tr>
+  <tr><td>Course outline</td><td><a href="https://github.com/openedx/frontend-app-learning/blob/master/src/course-home/outline-tab/messages.ts"><code>src/course-home/outline-tab/messages.ts</code></a></td></tr>
+  <tr><td>Course dates</td><td><a href="https://github.com/openedx/frontend-app-learning/blob/master/src/course-home/dates-tab/messages.ts"><code>src/course-home/dates-tab/messages.ts</code></a></td></tr>
+  <tr><td>Progress &amp; grades</td><td><a href="https://github.com/openedx/frontend-app-learning/blob/master/src/course-home/progress-tab/grades/messages.ts"><code>src/course-home/progress-tab/grades/messages.ts</code></a></td></tr>
+  <tr><td>Sequence navigation</td><td><a href="https://github.com/openedx/frontend-app-learning/blob/master/src/courseware/course/sequence/sequence-navigation/messages.ts"><code>src/courseware/course/sequence/sequence-navigation/messages.ts</code></a></td></tr>
+  <tr><td>Sequence loading</td><td><a href="https://github.com/openedx/frontend-app-learning/blob/master/src/courseware/course/sequence/messages.ts"><code>src/courseware/course/sequence/messages.ts</code></a></td></tr>
+  <tr><td>Celebrations</td><td><a href="https://github.com/openedx/frontend-app-learning/blob/master/src/courseware/course/celebration/messages.ts"><code>src/courseware/course/celebration/messages.ts</code></a></td></tr>
+  <tr><td>Course exit &amp; certificates</td><td><a href="https://github.com/openedx/frontend-app-learning/blob/master/src/courseware/course/course-exit/messages.ts"><code>src/courseware/course/course-exit/messages.ts</code></a></td></tr>
+  <tr><td>Enrollment alerts</td><td><a href="https://github.com/openedx/frontend-app-learning/blob/master/src/alerts/enrollment-alert/messages.ts"><code>src/alerts/enrollment-alert/messages.ts</code></a></td></tr>
+  <tr><td>Access expiration</td><td><a href="https://github.com/openedx/frontend-app-learning/blob/master/src/alerts/access-expiration-alert/messages.ts"><code>src/alerts/access-expiration-alert/messages.ts</code></a></td></tr>
+  <tr><td>Courseware search</td><td><a href="https://github.com/openedx/frontend-app-learning/blob/master/src/course-home/courseware-search/messages.ts"><code>src/course-home/courseware-search/messages.ts</code></a></td></tr>
+</table>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — translated learning navigation/content]</div>
+
+<p>ICU plural rules example from progress/grades:</p>
+
+<pre>droppableAssignmentsText: {
+  id: 'progress.footnotes.droppableAssignments',
+  defaultMessage: 'The lowest {numDroppable, plural, one{# {assignmentType} score is} other{# {assignmentType} scores are}} dropped.',
+},</pre>
+
+<hr>
+
+<h1>12. CI/CD &amp; Translation Automation</h1>
+
+<p>The localization architecture includes CI/CD validation for translation extraction workflows.</p>
+
+<p>Capabilities:</p>
+<ul>
+  <li>Automated extraction validation</li>
+  <li>Translation consistency checks</li>
+  <li>Build-time localization verification</li>
+</ul>
+
+<h3>Evidence</h3>
+
+<div class="placeholder">[SCREENSHOT PLACEHOLDER — GitHub Actions i18n_extract]</div>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-authn/blob/master/.github/workflows/ci.yml"><code>frontend-app-authn/.github/workflows/ci.yml</code></a> (lines 29–30)</p>
+
+<pre>- name: Run i18n_extract
+  run: npm run i18n_extract</pre>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-learning/blob/master/.github/workflows/validate.yml"><code>frontend-app-learning/.github/workflows/validate.yml</code></a> → triggers <code>make validate.ci</code> → <code>make validate</code></p>
+
+<p><strong>File:</strong> <a href="https://github.com/openedx/frontend-app-learning/blob/master/Makefile"><code>frontend-app-learning/Makefile</code></a> (validate target)</p>
+
+<pre>validate:
+	make validate-no-uncommitted-package-lock-changes
+	npm run i18n_extract
+	npm run lint -- --max-warnings 0
+	npm run types
+	npm run test
+	npm run build</pre>
+
+<p>No pull request can be merged in any MFE if string extraction fails. If a developer introduces a string without proper <code>id</code>/<code>defaultMessage</code>, CI rejects the change.</p>
+
+</body>
+</html>
